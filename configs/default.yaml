@@ -1,0 +1,91 @@
+# Default configuration for Dyadic Interaction Dataset Generator
+
+# General settings
+general:
+  seed: 42
+  debug: false
+  log_level: info  # debug, info, warning, error, critical
+  output_dir: /simurgh/group/juze/processed_data/dyadic_interaction/results
+  cache_dir: /simurgh/group/juze/processed_data/dyadic_interaction/cache
+  log_file: /simurgh/group/juze/processed_data/dyadic_interaction/logs/processing.log
+  device: cuda:0  # cuda:0, cpu
+
+# Preprocessing settings
+preprocessing:
+  fps: 30
+  resolution: [720, 1280]  # [height, width]
+  scene_change_threshold: 35.0
+  cache_frames: true
+
+# Person detection settings
+detection:
+  model: yolov8n.pt
+  confidence_threshold: 0.5
+  batch_size: 16
+  min_segment_length: 30  # Minimum frame count for valid two-person segments
+  visualization: true
+  min_bbox_area: 10000     # Minimum area in pixels for a valid bounding box (e.g., 100x100)
+  min_bbox_ratio: 0.01     # Minimum ratio of bbox area to frame area (1% of frame)
+  min_person_height: 0.2   # Minimum height of person as ratio of frame height (20% of frame height)
+  max_bbox_ratio: 0.4      # Maximum ratio of bbox area to frame area (40% of frame)
+  max_person_height: 0.9   # Maximum height of person as ratio of frame height (90% of frame height)
+  max_edge_proximity: 0.05 # Maximum proximity to frame edge as ratio (5% of frame dimension)
+  aspect_ratio_range: [0.3, 0.9]  # Valid width/height ratio range for person bounding box
+  device: cuda:0
+
+# Person tracking settings
+tracking:
+  tracker: bytetrack  # bytetrack, deepsort, etc.
+  max_age: 30  # Maximum frames to keep a track alive without matching
+  min_hits: 3  # Minimum number of matching detections before track is confirmed
+  iou_threshold: 0.3  # IOU threshold for association
+  visualization: true
+
+# Motion estimation settings
+motion:
+  # 4D-Humans body pose estimation
+  body:
+    model_path: 'models/hmr2/model.pt'
+    batch_size: 8
+    temporal_smoothing: true
+    smoothing_window: 5
+    visualization: true
+  
+  # HAMER hand pose estimation
+  hand:
+    model_path: 'models/hamer/model.pt'
+    batch_size: 8
+    visualization: true
+  
+  # SPECTRE face modeling
+  face:
+    model_path: 'models/spectre/model.pt'
+    batch_size: 8
+    visualization: true
+  
+  # SMPLX integration
+  smplx:
+    model_path: 'models/smplx/SMPLX_NEUTRAL_2020.npz'
+    gender: neutral
+
+# Audio processing settings
+audio:
+  # TalkNet speaker detection
+  speaker_detection:
+    model_path: models/talknet/model.pt
+    threshold: 0.5
+    visualization: true
+  
+  # Audio separation
+  separation:
+    model: conv_tasnet  # conv_tasnet, demucs, etc.
+    sample_rate: 16000
+    visualization: true
+
+# Data integration settings
+integration:
+  alignment_window: 3  # Frames to consider for temporal alignment
+  confidence_threshold: 0.3  # Minimum confidence for including data
+  export_format: json  # json, pkl, etc.
+  export_fps: 30
+  compress_results: true 

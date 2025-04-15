@@ -1,0 +1,193 @@
+# Overview  
+The Dyadic Interaction Dataset Generator is a pipeline system for automatically extracting high-quality multi-modal dyadic interaction data from YouTube videos. The system processes videos to identify segments with exactly two people interacting, extracts their body, hand, and facial motion parameters using state-of-the-art techniques, and aligns this with separated audio streams. The resulting dataset will enable research in human behavior analysis, multimodal AI, and human-computer interaction.
+
+# Core Features  
+1. **Video Sequence Selection**
+   - What: Automatically identifies and extracts video segments containing exactly two people interacting
+   - Why: Filters out unsuitable content (single person, groups, scene transitions) to focus processing on valuable dyadic interactions
+   - How: Uses person detection, tracking, and scene change detection to identify stable two-person segments
+
+2. **Person Tracking and Identity Management**
+   - What: Maintains consistent identity of each person across frames even with movement, occlusion, or minor scene changes
+   - Why: Essential for attributing motion and audio to the correct person throughout a sequence
+   - How: Combines visual tracking with spatial-temporal consistency constraints
+
+3. **Holistic Motion Capture**
+   - What: Extracts comprehensive motion parameters (body, hands, face) for each person
+   - Why: Provides complete representation of human behavior during interactions
+   - How: Integrates multiple specialized models (4D-Humans, HAMER, SPECTRE) into unified SMPLX 2020 parameters
+
+4. **Audio-Visual Speaker Association**
+   - What: Links detected speech segments to the corresponding person
+   - Why: Enables analysis of speech-gesture coordination and turn-taking behavior
+   - How: Uses TalkNet for initial speaker detection followed by spatial correlation with tracked individuals
+
+5. **Audio Separation**
+   - What: Separates the mixed audio into individual streams for each speaker
+   - Why: Allows for clean analysis of each person's speech patterns
+   - How: Applies source separation techniques guided by visual speaking cues
+
+# User Experience  
+## User Personas
+1. **AI Researcher**: Needs clean, annotated data to train multimodal interaction models
+2. **Behavioral Scientist**: Analyzes human interaction patterns across speech and non-verbal behavior
+3. **Animation/VR Developer**: Uses motion data to create realistic virtual characters
+
+## Key User Flows
+1. Configure pipeline parameters → Process videos → Review/validate results → Export dataset
+2. Select specific video segments → Apply targeted processing → Export specific interaction sequences
+3. Visualize extracted data (motion overlays, synchronized audio) → Analyze behavior patterns
+
+## UI/UX Considerations
+1. Command-line interface for batch processing with configuration files
+2. Visualization tools for reviewing extracted data quality
+3. Progress tracking and error reporting for long-running processes
+
+# Technical Architecture  
+## System Components
+1. **Preprocessing Module**
+   - Scene change detection
+   - Frame extraction and normalization
+   - Initial person detection
+
+2. **Tracking Module**
+   - Person detection (bounding boxes)
+   - Temporal tracking across frames
+   - Identity management
+
+3. **Motion Estimation Pipeline**
+   - Body pose estimation (4D-Humans)
+   - Hand pose estimation (HAMER)
+   - Face parameter extraction (SPECTRE)
+   - Integration into unified SMPLX model
+
+4. **Audio Processing Pipeline**
+   - Speaker diarization using TalkNet
+   - Audio-visual matching
+   - Audio source separation
+
+5. **Data Integration Module**
+   - Temporal alignment of all modalities
+   - Quality filtering and validation
+   - Dataset formatting and export
+
+## Data Models
+1. **Interaction Sequence**
+   - Metadata (source, timestamps, quality metrics)
+   - Person identities
+   - Frame-by-frame motion parameters
+   - Aligned audio streams
+
+2. **Motion Representation**
+   - SMPLX 2020 parameters for each person
+   - Confidence scores for different body parts
+   - Temporal smoothness metrics
+
+## Infrastructure Requirements
+1. CUDA-capable GPU environment for neural network inference
+2. Sufficient storage for raw videos and processed data
+3. Conda environment with compatible dependencies for all components
+
+# Development Roadmap  
+## MVP Requirements (Phase 1)
+1. Basic pipeline architecture with module interfaces
+2. Video preprocessing and two-person segment extraction
+3. Simple person tracking with bounding boxes
+4. Basic body pose estimation (4D-Humans only)
+5. Initial audio-person association using TalkNet
+6. Data export in simple JSON format
+7. Basic visualization for quality checking
+
+## Phase 2 Enhancements
+1. Integration of hand pose estimation (HAMER)
+2. Improved person tracking with re-identification
+3. Enhanced audio-visual association
+4. Basic audio separation
+5. Parallel processing for improved throughput
+6. Basic dataset statistics and quality metrics
+
+## Phase 3 Enhancements
+1. Face parameter extraction and integration (SPECTRE)
+2. Full SMPLX model integration
+3. Advanced audio separation techniques
+4. Temporal consistency optimization
+5. Comprehensive data validation tools
+6. Extended dataset format options
+
+## Phase 4 Enhancements
+1. Interactive visualization and data exploration tools
+2. Automated quality filtering
+3. Cross-modal consistency checks
+4. Dataset search and query capabilities
+5. Model fine-tuning tools for specific use cases
+
+# Logical Dependency Chain
+1. **Foundation Layer** (Must complete first)
+   - Environment setup with essential dependencies
+   - Video preprocessing and frame extraction
+   - Basic person detection and filtering for two-person scenes
+
+2. **Core Processing Layer**
+   - Person tracking implementation
+   - Basic 4D-Humans body pose estimation integration
+   - TalkNet integration for speaker detection
+   - Initial data storage format
+
+3. **Integration Layer**
+   - Linking detected persons across video frames
+   - Associating audio with tracked individuals
+   - Simple visualization for validation
+
+4. **Enhancement Layer**
+   - Hand pose integration
+   - Face parameter extraction
+   - Full SMPLX model integration
+   - Audio separation refinement
+
+5. **Optimization Layer**
+   - Temporal consistency improvements
+   - Cross-modal alignment refinement
+   - Performance optimization
+
+# Risks and Mitigations  
+## Technical Challenges
+1. **Risk**: Person tracking failure across scene changes
+   **Mitigation**: Implement conservative segmentation that prioritizes reliable tracking over segment length
+
+2. **Risk**: Integration complexity between different pose estimation models
+   **Mitigation**: Define clear intermediate representations and validation steps between components
+
+3. **Risk**: Poor audio separation in noisy environments
+   **Mitigation**: Implement quality metrics to filter out sequences with unreliable audio
+
+4. **Risk**: Computational resource requirements
+   **Mitigation**: Optimize batch processing and implement checkpointing for long-running processes
+
+## MVP Scope Management
+1. **Risk**: Feature creep extending timeline
+   **Mitigation**: Strictly prioritize core functionality (person detection, tracking, basic pose) for MVP
+
+2. **Risk**: Integration issues between components
+   **Mitigation**: Build simple end-to-end pipeline first, then enhance individual components
+
+3. **Risk**: Dataset quality issues
+   **Mitigation**: Focus on high-quality subset of videos for initial development and validation
+
+## Resource Constraints
+1. **Risk**: GPU memory limitations for concurrent models
+   **Mitigation**: Implement sequential processing with efficient resource management
+
+2. **Risk**: Storage requirements for processed data
+   **Mitigation**: Implement tiered storage strategy with automatic cleanup of intermediate files
+
+# Appendix  
+## Research Findings
+1. YouTube videos often contain scene changes every 3-7 seconds, requiring robust tracking
+2. Speaker overlap occurs in approximately 15% of conversational content
+3. Hand gesture and facial expression data quality heavily depends on video resolution and framing
+
+## Technical Specifications
+1. Minimum video resolution: 720p for reliable pose estimation
+2. Audio requirements: 16kHz sampling rate minimum
+3. SMPLX 2020 parameter format specifications
+4. Expected throughput: approximately 20-30 minutes of processing per minute of video 

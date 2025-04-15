@@ -1,0 +1,41 @@
+name: dyadic_interaction
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch>=2.0.0
+  - torchvision
+  - torchaudio
+  - cudatoolkit
+  - numpy
+  - scipy
+  - pillow
+  - matplotlib
+  - opencv
+  - ffmpeg
+  - pyyaml
+  - tqdm
+  - pytest
+  - pytest-cov
+  - yapf
+  - jupyter
+  - pip:
+    # Motion estimation packages - will install from source as needed
+    - git+https://github.com/shubham-goel/4D-Humans.git
+    # - git+https://github.com/geopavlakos/hamer.git
+    # - git+https://github.com/filby89/spectre.git
+    # Audio processing packages
+    - librosa
+    - soundfile
+    # Tracking packages
+    - ultralytics  # For YOLO implementation
+    # Utilities
+    - coloredlogs
+    - rich
+    - tensorboard
+    # Optional: TalkNet for speaker detection
+    # - git+https://github.com/TaoRuijie/TalkNet-ASD.git  # Uncomment if needed 
